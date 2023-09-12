@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  product_point:
+    build: .
+    restart: always
+    container_name: my-parser
+    working_dir: /app
+
+    environment:
+          TZ: Europe/Moscow
+          VAR1: ${VAR1}
+          VAR2: ${VAR2}
+
+    volumes:
+      - /home/get/logs_all/product_point/:/app/_logs/
+
+    command: sh -c "flask run && sh script.sh"

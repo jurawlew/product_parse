@@ -1,4 +1,5 @@
 import logging
+import environ
 
 from clickhouse_driver import Client
 from flask import Flask, request, render_template
@@ -8,23 +9,32 @@ from product_point.parse import Parse
 
 app = Flask(__name__)
 
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/'
+BASE_DIR = environ.Path(__file__) - 2
+env = environ.Env()
+environ.Env.read_env(env_file=BASE_DIR('.env'))
+
+REDIS_HOST = env.str('REDIS_HOST', 'REDIS_HOST')
+CLICKHOUSE_HOST = env.str('CLICKHOUSE_HOST', 'CLICKHOUSE_HOST')
+CLICKHOUSE_USER = env.str('CLICKHOUSE_USER', 'CLICKHOUSE_USER')
+CLICKHOUSE_PASSWORD = env.str('CLICKHOUSE_PASSWORD', 'CLICKHOUSE_PASSWORD')
+CLICKHOUSE_PORT = env.str('CLICKHOUSE_PORT', 'CLICKHOUSE_PORT')
+
+app.config['CELERY_BROKER_URL'] = REDIS_HOST
+app.config['CELERY_RESULT_BACKEND'] = REDIS_HOST
 
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 
 
 @celery.task
 def task_parse(category_id, product_id):
-    client = Client(host='82.146.62.10',
-                    user='izhuravlev',
-                    password='12345678',
-                    port='9000')
+    client = Client(host=CLICKHOUSE_HOST,
+                    user=CLICKHOUSE_USER,
+                    password=CLICKHOUSE_PASSWORD,
+                    port=CLICKHOUSE_PORT)
     result = list()
     parse = Parse(client, category_id, product_id, result)
     parse.start()
     parse.join()
-    print(parse.result)
 
     # parsers = [Parse(client, product_id, category_id, result) for product_id, category_id in final_dict]
     # for parse in parsers:
