@@ -4,7 +4,7 @@ services:
   product_point:
     build: .
     restart: always
-    container_name: my-parser
+    container_name: product_point
     working_dir: /app
 
     environment:
