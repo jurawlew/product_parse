@@ -14,5 +14,5 @@ services:
 
     volumes:
       - /home/get/logs_all/product_point/:/app/_logs/
-
-    command: sh -c "flask run && sh script.sh"
+    command: sh script.sh
+    #command: sh -c "flask run && sh script.sh"
