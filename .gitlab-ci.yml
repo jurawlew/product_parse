@@ -7,14 +7,13 @@ workflow:
         TAG_NAME: dl1
       when: always
 
-
-    stages:
-      - deploy
-    deploy:
-      stage: deploy
-      tags:
-        - ${TAG_NAME}
-      script:
-        - docker compose down
-        - docker image prune --all -f
-        - docker compose up -d
+stages:
+  - deploy
+deploy:
+  stage: deploy
+  tags:
+    - ${TAG_NAME}
+  script:
+    - docker compose down
+    - docker image prune --all -f
+    - docker compose up -d
