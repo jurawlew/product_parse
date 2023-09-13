@@ -5,7 +5,7 @@ from clickhouse_driver import Client
 from flask import Flask, request, render_template
 from celery import Celery
 
-from product_point.parse import Parse
+from parse import Parse
 
 app = Flask(__name__)
 
